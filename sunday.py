@@ -84,4 +84,6 @@ def save_chat():
     return jsonify({"status": "saved"})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 10000))  # Render will set PORT automatically
+    app.run(host='0.0.0.0', port=port, debug=True)
+
