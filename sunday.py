@@ -3,6 +3,7 @@ import json
 import datetime
 import pyttsx3
 import os
+from flask import send_file  # (already imported Flask)
 
 app = Flask(__name__)
 
@@ -82,6 +83,10 @@ def save_chat():
     with open("chat_log.txt", "a") as f:
         f.write(json.dumps(data) + "\n")
     return jsonify({"status": "saved"})
+
+@app.route('/download_memory')
+def download_memory():
+    return send_file(MEMORY_FILE, as_attachment=True)
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 10000))  # Render will set PORT automatically
