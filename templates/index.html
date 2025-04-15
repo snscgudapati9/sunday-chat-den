@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sunday Chat Den</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background-color: #f0f0e8;
+      color: #012;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .title {
+      font-size: 2em;
+      font-weight: bold;
+      color: #2a5e72;
+      margin-top: 10px;
+    }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .menu a {
+      text-decoration: none;
+      color: #2a5e72;
+    }
+
+    #taskBox {
+      margin-top: 20px;
+      border: 2px solid #000;
+      border-radius: 15px;
+      padding: 10px;
+      background: white;
+    }
+
+    .chat-section {
+      margin-top: 20px;
+      height: 300px;
+      overflow-y: auto;
+      border: 2px solid #000;
+      border-radius: 15px;
+      background: white;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .timestamp {
+      font-size: 0.8em;
+      color: #888;
+      margin-left: 10px;
+    }
+
+    .message {
+      max-width: 75%;
+      padding: 10px;
+      border-radius: 10px;
+      word-wrap: break-word;
+    }
+
+    .user {
+      align-self: flex-end;
+      background-color: #d1e7dd;
+    }
+
+    .sunday {
+      align-self: flex-start;
+      background-color: #fff3cd;
+    }
+
+    .input-section {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .input-section input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 20px;
+      border: 1px solid #ccc;
+    }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="menu">
+        <div>☰ Menu</div>
+        <a href="#">Chat</a>
+        <a href="#">Train</a>
+      </div>
+      <div id="time"></div>
+    </div>
+
+    <div class="title">Sunday Chat Den</div>
+
+    <div id="taskBox" style="display: none;"></div>
+
+    <div class="chat-section" id="chatBox">
+      <!-- Messages will appear here -->
+    </div>
+
+    <div class="input-section">
+      <input type="text" id="userInput" placeholder="hello, text or voice something mama" />
+      <button class="icon-btn" onclick="sendMessage()">📤</button>
+      <button class="icon-btn" onclick="searchAndTrain()">🔍</button>
+      <button class="icon-btn" id="voiceBtn">🎤</button>
+    </div>
+  </div>
+
+  <script>
+    const chatBox = document.getElementById("chatBox");
+    const taskBox = document.getElementById("taskBox");
+    const timeDisplay = document.getElementById("time");
+    const input = document.getElementById("userInput");
+    const voiceBtn = document.getElementById("voiceBtn");
+
+    function updateTime() {
+      timeDisplay.innerText = new Date().toLocaleTimeString();
+    }
+    setInterval(updateTime, 1000);
+
+    fetch('/load_tasks')
+      .then(res => res.json())
+      .then(data => {
+        if (data.task) {
+          taskBox.style.display = "block";
+          taskBox.innerHTML = ` 
+            <strong>Tasks & Reminders</strong><br><br>
+            ${data.task}<br>
+            <small>${data.date}</small>
+          `;
+        }
+      });
+
+    async function sendMessage() {
+      const userText = input.value.trim();
+      if (!userText) return;
+
+      appendMessage("You", userText, "user");
+      input.value = "";
+
+      if (userText.toLowerCase() === "/save_chat") {
+        saveChat();
+        return;
+      }
+
+      const lower = userText.toLowerCase();
+      const casual = [
+        { match: "hello", reply: "Hey there! You rang, who is this" },
+        { match: "hey", reply: "Heyyy! What’s up" },
+        { match: "hi", reply: "Hi hi hi! Triple hi for triple energy!" },
+        { match: "how are you", reply: "I’m thriving in binary, thanks for asking! & I think you’re doing great." },
+        { match: "fantastic", reply: "You're fantastic for saying that, mama!" },
+        { match: "sister", reply: "Hello Sister! I bet you're cooler than Buddy. Don’t tell him I said that." }
+      ];
+
+      for (const c of casual) {
+        if (lower.includes(c.match)) {
+          appendMessage("Sunday", c.reply, "sunday");
+          speak(c.reply);
+          return;
+        }
+      }
+
+      try {
+        const res = await fetch('/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: userText })
+        });
+        const data = await res.json();
+        appendMessage("Sunday", data.response, "sunday");
+        speak(data.response);
+      } catch (err) {
+        const fallback = "Oops, something glitched. Try again, mama.";
+        appendMessage("Sunday", fallback, "sunday");
+        speak(fallback);
+      }
+    }
+
+    async function searchAndTrain() {
+      const userText = input.value.trim();
+      if (!userText) return;
+
+      appendMessage("You", userText, "user");
+      input.value = "";
+
+      const searchReply = await wikipediaSearch(userText);
+      appendMessage("Sunday", `${searchReply} <br><em>(Wikipedia sourced)</em>`, "sunday");
+      speak(searchReply);
+
+      fetch('/train', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          question: userText,
+          answer: searchReply
+        })
+      });
+    }
+
+    function appendMessage(sender, text, role) {
+      const box = document.createElement("div");
+      box.className = `message ${role}`;
+      box.innerHTML = `<strong>${sender}:</strong><br>${text}<span class="timestamp">${getTime()}</span>`;
+      chatBox.appendChild(box);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function getTime() {
+      const now = new Date();
+      return `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+    }
+
+    function speak(text) {
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'en-US';
+      speechSynthesis.speak(utter);
+    }
+
+    async function wikipediaSearch(query) {
+      const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`);
+      if (res.ok) {
+        const data = await res.json();
+        return data.extract || "I couldn't find anything juicy there.";
+      } else {
+        return "Sorry mama, even Wikipedia ghosted me.";
+      }
+    }
+
+    function saveChat() {
+      const chats = Array.from(document.querySelectorAll(".message")).map(msg => msg.innerText);
+      const blob = new Blob([JSON.stringify({ chat: chats }, null, 2)], { type: 'application/json' });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "memory.json";
+      a.click();
+      appendMessage("Sunday", "Boom! Chat saved to memory.json like a secret diary.", "sunday");
+    }
+
+    voiceBtn.addEventListener("click", () => {
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = "en-US";
+      recognition.start();
+
+      recognition.onresult = (event) => {
+        const voiceText = event.results[0][0].transcript;
+        input.value = voiceText;
+        sendMessage();
+      };
+    });
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") sendMessage();
+    });
+  </script>
+</body>
+</html>
