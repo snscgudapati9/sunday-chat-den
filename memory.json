@@ -23,4 +23,87 @@
     "HCPCS": "Codes for medical supplies, equipment, and services."
   },
   "example": "A physician sees a patient for a flu check-up. The coder assigns CPT code 99213 and ICD-10 code J10.1. The claim is submitted, the payer approves it, and the payment is posted."
+
+  "Hospital Billing": "Hospital billing refers to the process of billing for services provided by a hospital, such as inpatient stays, surgeries, lab tests, room charges, and facility usage. It involves both technical and professional charges.",
+  "steps": [
+    "1. Patient Registration – Collect demographic and insurance information.",
+    "2. Insurance Verification – Confirm coverage and benefits.",
+    "3. Charge Capture – Record all services provided (e.g., surgery, labs, medication).",
+    "4. Medical Coding – Convert procedures and diagnoses into standardized codes.",
+    "5. Charge Entry – Enter codes and charges into billing system.",
+    "6. Claim Generation – Prepare claims for insurance submission.",
+    "7. Claim Submission – Send claims to payers (private or government).",
+    "8. Payment Posting – Apply payments received from payers.",
+    "9. Denial Management – Handle and appeal claim denials or rejections.",
+    "10. Patient Billing – Generate patient statements for remaining balances."
+  ],
+  "types_of_billing": {
+    "Technical Charges": "Charges for equipment, hospital facility, and non-physician services.",
+    "Professional Charges": "Charges for physician and specialist services."
+  },
+  "example": "A patient is admitted for surgery. The hospital bills for the room, operating room, anesthesia, medications, and labs (technical charges), while the surgeon and anesthesiologist bill separately for their services (professional charges)."
+
+  "Revenue Cycle Management (RCM)": "Revenue Cycle Management (RCM) is the financial process that healthcare facilities use to manage the administrative and clinical functions associated with claims processing, payment, and revenue generation.",
+  "steps": [
+    "1. Patient Scheduling & Registration – Capture demographics and insurance information.",
+    "2. Insurance Verification – Confirm eligibility and coverage before the visit.",
+    "3. Medical Documentation – Record services provided during the visit.",
+    "4. Coding – Translate services into standardized codes (CPT, ICD-10, HCPCS).",
+    "5. Charge Entry – Enter charges into billing system.",
+    "6. Claim Submission – Send claims to insurance companies.",
+    "7. Payment Posting – Record payments received from payers.",
+    "8. Denial Management – Identify and resolve rejected or denied claims.",
+    "9. Patient Billing – Bill the patient for remaining balance.",
+    "10. Collections – Follow up on unpaid patient balances."
+  ],
+  "key_goals": [
+    "Maximize revenue collection.",
+    "Reduce denials and rework.",
+    "Improve billing accuracy and efficiency.",
+    "Ensure compliance with regulations."
+  ],
+  "example": "A clinic schedules a patient, verifies insurance, provides treatment, and documents it. Coders code the visit, a claim is submitted, payment is received from insurance, and any patient balance is billed."
+
+  "Assignment of Benefits (AOB)": "Assignment of Benefits (AOB) is a legal agreement in which a patient authorizes their health insurance provider to directly pay the healthcare provider for the services rendered, instead of reimbursing the patient.",
+  "importance": [
+    "Ensures the provider gets paid directly by the insurance company.",
+    "Reduces the risk of non-payment from patients.",
+    "Streamlines the billing and collection process.",
+    "Is often required by providers before services are rendered."
+  ],
+  "key_points": {
+    "Patient Authorization": "The patient must sign an AOB form before claim submission.",
+    "Billing Flow": "Once signed, the provider submits the claim and receives payment directly.",
+    "Denials": "If AOB is not on file, the payer may deny direct payment to the provider.",
+    "Patient Responsibility": "Any remaining balance after insurance is still the patient’s responsibility."
+  },
+  "example": "A patient visits a clinic and signs an AOB form. The clinic submits a claim to the insurance company, which then pays the clinic directly instead of reimbursing the patient."
+
+  "Explanation of Benefits (EOB)": "An Explanation of Benefits (EOB) is a document sent by a health insurance company to the patient and provider, explaining what medical treatments or services were paid for on their behalf and how the payment was calculated.",
+  "importance": [
+    "Helps patients understand how much the insurer paid.",
+    "Clarifies what the patient may still owe.",
+    "Details any denials or reductions in the claim.",
+    "Supports transparency in healthcare billing."
+  ],
+  "key_points": {
+    "Not a Bill": "An EOB is not an invoice but a statement of payment activity.",
+    "Includes": "Patient name, provider name, date of service, procedures performed, billed amount, allowed amount, insurance payment, and patient responsibility.",
+    "Denials": "Explains if a service was not covered and why.",
+    "Appeals": "Includes instructions if the patient wants to challenge a denial or reduced payment."
+  },
+  "example": "After a doctor’s visit, the patient receives an EOB showing the total billed ($200), allowed amount ($150), insurance payment ($120), and patient responsibility ($30)."
+
+  "Capitation": "Capitation is a payment arrangement where healthcare providers are paid a set amount per patient per period of time, regardless of how many services the patient uses. It's a form of prepaid healthcare financing.",
+  "importance": [
+    "Encourages providers to focus on preventive care.",
+    "Helps control healthcare costs.",
+    "Transfers financial risk to providers.",
+    "Simplifies billing since payments are predictable."
+  ],
+  "key_points": {
+    "Per Member Per Month (PMPM)": "Payments are made monthly based on the number of enrolled patients.",
+    "Risk Bearing": "Providers take on financial risk; they may lose money if patient care exceeds the capitation amount.",
+    "Scope": "Capitation may cover primary care only or include specialty and hospital care depending on the agreement.",
+    "Incentives": "Providers are incentivized to reduce unnecessary services and manage patient health effectively."
 }
