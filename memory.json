@@ -1,13 +1,13 @@
 {
-  "who created you": "Buddy created me, duh! I'm his masterpiece!",
-  "what's your name": "I'm Sunday! Your chaotic little AI assistant!",
+  "who created you": "Buddy created me, duh! I'm his masterpiece ~",
+  "what's your name": "I'm Sunday! Your chaotic little AI assistant",
   "hello": "Hello is a salutation or greeting in the English language. It is first attested in writing from 1826.",
-  "who invented facebook": "Mark Zuckerberg, along with his Harvard College roommates Eduardo Saverin, Andrew McCollum, Dustin Moskovitz, and Chris Hughes, invented Facebook in 2004.",
-  "founder of facebook": "Facebook was founded by Mark Zuckerberg.",
-  "facebook": "Facebook is a social media and networking platform launched in 2004 by Mark Zuckerberg and fellow Harvard students. It allows users to connect, share content, and communicate online. As of late 2024, Facebook is one of the most visited websites globally and is owned by Meta.",
+  "who invented facebook": "Sorry mama, even Wikipedia ghosted me.",
+  "founder of facebook": "Sorry mama, even Wikipedia ghosted me.",
+  "facebook": "Facebook is a social media platform founded by Mark Zuckerberg and others in 2004. It is now owned by Meta and has billions of users worldwide.",
   
-  "Revenue Cycle Management (RCM)": {
-    "definition": "RCM is the financial process that healthcare facilities use to manage the administrative and clinical functions associated with claims processing, payment, and revenue generation.",
+  "Revenue Cycle Management": {
+    "definition": "Revenue Cycle Management (RCM) is the financial process that healthcare facilities use to manage administrative and clinical functions associated with claims processing, payment, and revenue generation.",
     "steps": [
       "1. Patient Scheduling & Registration – Capture demographics and insurance information.",
       "2. Insurance Verification – Confirm eligibility and coverage before the visit.",
@@ -30,7 +30,7 @@
   },
 
   "Physician Billing": {
-    "definition": "Physician billing is the process of submitting claims to insurance companies to get paid for medical services provided by doctors. It includes coding, claim submission, and payment posting.",
+    "definition": "Physician billing is the process of submitting claims to insurance companies to get paid for medical services provided by doctors.",
     "steps": [
       "1. Patient Registration – Collect and verify patient insurance details.",
       "2. Medical Coding – Convert services into CPT, ICD-10, and HCPCS codes.",
@@ -50,7 +50,7 @@
   },
 
   "Hospital Billing": {
-    "definition": "Hospital billing refers to the process of billing for services provided by a hospital, such as inpatient stays, surgeries, lab tests, room charges, and facility usage. It involves both technical and professional charges.",
+    "definition": "Hospital billing refers to billing for services provided by a hospital such as inpatient stays, surgeries, lab tests, and room charges.",
     "steps": [
       "1. Patient Registration – Collect demographic and insurance information.",
       "2. Insurance Verification – Confirm coverage and benefits.",
@@ -71,7 +71,7 @@
   },
 
   "Assignment of Benefits (AOB)": {
-    "definition": "AOB is a legal agreement in which a patient authorizes their health insurance provider to directly pay the healthcare provider for the services rendered, instead of reimbursing the patient.",
+    "definition": "Assignment of Benefits (AOB) is a legal agreement in which a patient authorizes their insurance to directly pay the provider for services.",
     "importance": [
       "Ensures the provider gets paid directly by the insurance company.",
       "Reduces the risk of non-payment from patients.",
@@ -88,7 +88,7 @@
   },
 
   "Explanation of Benefits (EOB)": {
-    "definition": "An EOB is a document sent by a health insurance company to the patient and provider, explaining what medical treatments or services were paid for on their behalf and how the payment was calculated.",
+    "definition": "An EOB is a statement from the insurer explaining what was paid on the patient’s behalf and why.",
     "importance": [
       "Helps patients understand how much the insurer paid.",
       "Clarifies what the patient may still owe.",
@@ -105,7 +105,7 @@
   },
 
   "Capitation": {
-    "definition": "Capitation is a payment arrangement where healthcare providers are paid a set amount per patient per period of time, regardless of how many services the patient uses. It's a form of prepaid healthcare financing.",
+    "definition": "Capitation is a payment model where healthcare providers are paid a set amount per patient regardless of services used.",
     "importance": [
       "Encourages providers to focus on preventive care.",
       "Helps control healthcare costs.",
