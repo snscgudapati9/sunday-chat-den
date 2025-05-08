@@ -1,157 +1,51 @@
-from flask import Flask, render_template, request, jsonify, send_file
-import json
+from flask import Flask, request, jsonify, send_from_directory
+import openai
 import os
-import datetime
-import pyttsx3
-from difflib import get_close_matches
 
 app = Flask(__name__)
 
-# Files
-MEMORY_FILE = 'memory.json'
-DEFAULT_MEMORY_FILE = 'default_memory.json'
-CHAT_LOG = 'chat_log.txt'
+# OpenRouter API Key and Base URL
+openai.api_key = "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"
+openai.api_base = "https://openrouter.ai/api/v1"  # OpenRouter API Base URL
 
-# Hardcoded Knowledge Base
-knowledge_base = {
-    "RCM": {
-        "aliases": ["REVENUE CYCLE MANAGEMENT", "RCM"],
-        "definition": "Revenue Cycle Management (RCM) is the process healthcare systems use to track patient care episodes from registration to final payment.",
-        "steps": [
-            "1. Patient registration",
-            "2. Insurance verification",
-            "3. Charge capture",
-            "4. Claim submission",
-            "5. Payment posting",
-            "6. Denial management",
-            "7. Reporting"
-        ],
-        "importance": [
-            "Improves financial performance",
-            "Reduces claim denials",
-            "Enhances patient experience"
-        ]
-    },
-    "PHYSICIAN BILLING": {
-        "aliases": ["PHYSICIAN BILLING", "DOCTOR BILLING"],
-        "definition": "Physician billing refers to billing for services by doctors like consultations and procedures.",
-        "steps": [
-            "1. Document services provided",
-            "2. Assign medical codes",
-            "3. Generate and submit claims",
-            "4. Follow up on payments",
-            "5. Post payments and manage denials"
-        ]
-    }
-}
-
-# Load memory (trainable data)
-def load_memory():
-    if os.path.exists(MEMORY_FILE):
-        with open(MEMORY_FILE, 'r') as f:
-            return json.load(f)
-    elif os.path.exists(DEFAULT_MEMORY_FILE):
-        with open(DEFAULT_MEMORY_FILE, 'r') as f:
-            return json.load(f)
-    return {}
-
-memory = load_memory()
-
-# Save memory
-def save_memory():
-    with open(MEMORY_FILE, 'w') as f:
-        json.dump(memory, f, indent=2)
-
-# Fuzzy match hardcoded knowledge
-def find_knowledge_match(user_input):
-    user_input = user_input.strip().upper()
-    all_terms = {alias: key for key, data in knowledge_base.items() for alias in data.get("aliases", [])}
-    match = get_close_matches(user_input, all_terms.keys(), n=1, cutoff=0.6)
-    if match:
-        return all_terms[match[0]]
-    return None
-
-# Generate response
-def get_response(user_input):
-    user_input_lower = user_input.lower().strip()
-
-    # Check hardcoded knowledge base
-    match_key = find_knowledge_match(user_input)
-    if match_key:
-        topic = knowledge_base[match_key]
-        response = ""
-
-        if "definition" in topic:
-            response += f"Definition:\n{topic['definition']}\n\n"
-        if "steps" in topic:
-            response += "Steps:\n" + "\n".join(topic["steps"]) + "\n\n"
-        if "importance" in topic:
-            response += "Importance:\n" + "\n".join(topic["importance"]) + "\n\n"
-        return response.strip()
-
-    # Check memory
-    for key in memory:
-        if key.lower() in user_input_lower:
-            return memory[key]
-
-    return "Sorry, mama I don't know that yet. Train me?"
-
-# Text-to-speech
-def speak(text):
-    engine = pyttsx3.init()
-    engine.say(text)
-    engine.runAndWait()
-
-# Chat logging
-def log_interaction(user, sunday):
-    with open(CHAT_LOG, 'a') as f:
-        f.write(f"You: {user}\nSunday: {sunday}\n\n")
-
-# Routes
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return send_from_directory(os.path.join(os.getcwd(), 'templates'), 'index.html')
 
-@app.route('/chat', methods=['POST'])
+@app.route('/ask', methods=['POST'])
 def chat():
-    user_input = request.json.get('message', '')
-    response = get_response(user_input)
-    log_interaction(user_input, response)
-    return jsonify({'response': response})
+    try:
+        user_message = request.json.get('message')
+        if not user_message:
+            return jsonify({"response": "Please provide a message."}), 400
+
+        # Requesting response from OpenRouter/OpenAI
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are Sunday, a helpful and funny assistant."},
+                {"role": "user", "content": user_message}
+            ]
+        )
+
+        answer = response['choices'][0]['message']['content'].strip()
+
+        return jsonify({"response": answer})
+
+    except Exception as e:
+        return jsonify({"response": f"Oops! Something went wrong. {str(e)}"}), 500
 
 @app.route('/train', methods=['POST'])
-def train():
+def train_sunday():
     data = request.json
-    question = data.get('question', '').strip()
-    answer = data.get('answer', '').strip()
-    if question and answer:
-        memory[question] = answer
-        save_memory()
-        return jsonify({'status': 'success', 'message': 'Sunday learned it!'})
-    return jsonify({'status': 'error', 'message': 'Invalid input.'})
+    return jsonify({"status": "learned", "data": data}), 200
 
-@app.route('/load_tasks')
+@app.route('/load_tasks', methods=['GET'])
 def load_tasks():
-    today = datetime.datetime.now()
-    if today.weekday() < 5:
-        return jsonify({
-            'task': 'Complete Sunday’s next feature update.',
-            'date': today.strftime("%d/%m/%Y")
-        })
-    return jsonify({'task': None})
+    return jsonify({
+        "task": "Update the Sunday's tasks for the next week.",
+        "date": "2025-05-07"
+    })
 
-@app.route('/save_chat', methods=['POST'])
-def save_chat():
-    data = request.json
-    with open("chat_log.txt", "a") as f:
-        f.write(json.dumps(data) + "\n")
-    return jsonify({"status": "saved"})
-
-@app.route('/download_memory')
-def download_memory():
-    return send_file(MEMORY_FILE, as_attachment=True)
-
-# Run app
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 10000))
-    app.run(host='0.0.0.0', port=port, debug=True)
+    app.run(debug=True, use_reloader=False)
