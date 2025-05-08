@@ -1,3 +1,4 @@
 Flask
 pyttsx3
 openai
+gunicorn
