@@ -127,7 +127,8 @@
     <div class="input-section">
       <input type="text" id="userInput" placeholder="hello, text or voice something mama" />
       <button class="icon-btn" onclick="sendMessage()">📤</button>
-      <button class="icon-btn" onclick="searchAndTrain()">🔍</button>
+      <!-- Just reuse sendMessage if behavior is the same -->
+      <button class="icon-btn" onclick="sendMessage()">🔍</button>
       <button class="icon-btn" id="voiceBtn">🎤</button>
     </div>
   </div>
@@ -164,64 +165,33 @@
       appendMessage("You", userText, "user");
       input.value = "";
 
-      if (userText.toLowerCase() === "/save_chat") {
-        saveChat();
-        return;
-      }
-
-      const lower = userText.toLowerCase();
-      const casual = [
-        { match: "hello", reply: "Hey there! You rang, who is this" },
-        { match: "hey", reply: "Heyyy! What’s up" },
-        { match: "hi", reply: "Hi hi hi! Triple hi for triple energy!" },
-        { match: "how are you", reply: "I’m thriving in binary, thanks for asking! & I think you’re doing great." },
-        { match: "fantastic", reply: "You're fantastic for saying that, mama!" },
-        { match: "sister", reply: "Hello Sister! I bet you're cooler than Buddy. Don’t tell him I said that." }
-      ];
-
-      for (const c of casual) {
-        if (lower.includes(c.match)) {
-          appendMessage("Sunday", c.reply, "sunday");
-          speak(c.reply);
-          return;
-        }
-      }
-
       try {
-        const res = await fetch('/chat', {
+        const res = await fetch('/ask', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: userText })
         });
         const data = await res.json();
-        appendMessage("Sunday", data.response, "sunday");
-        speak(data.response);
+        const response = data.response || "No response from Sunday.";
+
+        appendMessage("Sunday", `${response} <br>`, "sunday");
+        speak(response);
+
+        // Optional: train the assistant with the Q&A
+        fetch('/train', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            question: userText,
+            answer: response
+          })
+        });
+
       } catch (err) {
-        const fallback = "Oops, something glitched. Try again, mama.";
+        const fallback = "Oops, I couldn’t reach Sunday’s brain.";
         appendMessage("Sunday", fallback, "sunday");
         speak(fallback);
       }
-    }
-
-    async function searchAndTrain() {
-      const userText = input.value.trim();
-      if (!userText) return;
-
-      appendMessage("You", userText, "user");
-      input.value = "";
-
-      const searchReply = await wikipediaSearch(userText);
-      appendMessage("Sunday", `${searchReply} <br><em>(Wikipedia sourced)</em>`, "sunday");
-      speak(searchReply);
-
-      fetch('/train', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          question: userText,
-          answer: searchReply
-        })
-      });
     }
 
     function appendMessage(sender, text, role) {
@@ -243,16 +213,6 @@
       speechSynthesis.speak(utter);
     }
 
-    async function wikipediaSearch(query) {
-      const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`);
-      if (res.ok) {
-        const data = await res.json();
-        return data.extract || "I couldn't find anything juicy there.";
-      } else {
-        return "Sorry mama, even Wikipedia ghosted me.";
-      }
-    }
-
     function saveChat() {
       const chats = Array.from(document.querySelectorAll(".message")).map(msg => msg.innerText);
       const blob = new Blob([JSON.stringify({ chat: chats }, null, 2)], { type: 'application/json' });
@@ -269,14 +229,15 @@
       recognition.start();
 
       recognition.onresult = (event) => {
-        const voiceText = event.results[0][0].transcript;
-        input.value = voiceText;
+        const transcript = event.results[0][0].transcript;
+        input.value = transcript;
         sendMessage();
       };
-    });
 
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") sendMessage();
+      recognition.onerror = (err) => {
+        console.error("Speech recognition error", err);
+        appendMessage("Sunday", "Oops! Couldn't recognize your voice.", "sunday");
+      };
     });
   </script>
 </body>
