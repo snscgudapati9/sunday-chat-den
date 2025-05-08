@@ -2,3 +2,5 @@ Flask
 pyttsx3
 openai
 gunicorn
+flask
+openai>=1.0.0
